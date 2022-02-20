@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-const { router: apiRoutes } = require("./routes/api_routes/index");
+const apiRoutes = require("./routes/api_routes/index");
 
 // Middleware
 app.use(express.urlencoded({ extended: false }));
