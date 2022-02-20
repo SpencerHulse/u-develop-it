@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 const mysql = require("mysql2");
-const { restart } = require("nodemon");
+const inputCheck = require("./utils/inputCheck");
 
 // Middleware
 app.use(express.urlencoded({ extended: false }));
@@ -20,23 +20,6 @@ const db = mysql.createConnection(
   },
   console.log("Connected to the election database.")
 );
-
-/* db.query("SELECT * FROM candidates", (err, rows) => {
-  console.log(rows);
-}); */
-
-/* db.query("SELECT * FROM candidates WHERE id = 1", (err, row) => {
-  console.log(rows);
-}); */
-
-/* In the below =? is a placeholder, where the 1 is what is inserted
-db.query("DELETE FROM candidates WHERE id = ?", 1, (err, result) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log(result);
-  }
-}); */
 
 /* // Create a candidate
 const sql =
@@ -96,15 +79,39 @@ app.delete("/api/candidates/:id", (req, res) => {
     } else if (!result.affectedRows) {
       res.json({ message: "Candidate not found!" });
     } else {
-      res
-        .status(200)
-        .json({
-          message: "deleted",
-          changes: result.affectedRows,
-          id: req.params.id,
-        });
+      res.status(200).json({
+        message: "deleted",
+        changes: result.affectedRows,
+        id: req.params.id,
+      });
     }
   });
+});
+
+// Add a candidate
+app.post("/api/candidates", ({ body }, res) => {
+  const errors = inputCheck(
+    body,
+    "first_name",
+    "last_name",
+    "industry_connected"
+  );
+  if (errors) {
+    res.status(400).json({ error: errors });
+    return;
+  } else {
+    const sql = `INSERT INTO candidates (first_name, last_name, industry_connected) VALUES (?, ?, ?)`;
+    const params = [body.first_name, body.last_name, body.industry_connected];
+
+    db.query(sql, params, (err, result) => {
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      } else {
+        res.status(200).json({ message: "success", data: body });
+      }
+    });
+  }
 });
 
 // Default response to everything else
