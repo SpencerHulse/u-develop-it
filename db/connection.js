@@ -1,4 +1,5 @@
 const mysql = require("mysql2");
+require("dotenv").config();
 
 // Connect to database
 const db = mysql.createConnection(
@@ -7,7 +8,7 @@ const db = mysql.createConnection(
     // Your MySQL username
     user: "root",
     // Your MySQLpassword
-    password: "*?x27>,vz9&@;tT9",
+    password: process.env.passwordENV,
     database: "election",
   },
   console.log("Connected to the election database.")
