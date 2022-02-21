@@ -1,7 +1,17 @@
 const router = require("express").Router();
-const { getAllVoters, getVoterByID } = require("../../controllers/voters");
+const {
+  getAllVoters,
+  getVoterByID,
+  addVoter,
+  updateEmail,
+  deleteVoter,
+} = require("../../controllers/voters");
 
-router.route("/voters").get(getAllVoters);
-router.route("/voters/:id").get(getVoterByID);
+router.route("/voters").get(getAllVoters).post(addVoter);
+router
+  .route("/voters/:id")
+  .get(getVoterByID)
+  .put(updateEmail)
+  .delete(deleteVoter);
 
 module.exports = router;
