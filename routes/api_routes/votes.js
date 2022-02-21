@@ -1,4 +1,6 @@
 const router = require("express").Router();
-const {} = require("../../controllers/votes");
+const { addVote, getVotingResults } = require("../../controllers/votes");
+
+router.route("/votes").get(getVotingResults).post(addVote);
 
 module.exports = router;
